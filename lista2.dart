@@ -1,10 +1,17 @@
 enum Pessoa{
-    {nome, idade}
+    biava("Biava", 20),
+    Giovana("Giovana", 20),
+    Joao("João", 16);
+
+    final String nome;
+    final int idade;
+
+    const Pessoa(this.nome, this.idade);
 }
 
 void main(){
     //1
-    List<String> frutas = ['banana', 'maçã', 'tangerina', 'uva', 'pera'];
+    List<String> frutas = ['banana', 'maçã', 'tangerina', 'uva', 'pera', 'abacaxi'];
     print(frutas);
 
     //2
@@ -51,31 +58,12 @@ void main(){
 
     //9
     List<int> numeros = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-    List<int> pares = (numeros) {
-        List<int> resultado = [];
-        for (int numero in numeros) {
-            if (numero % 2 == 0) {
-                resultado.add(numero);
-            }
-        }
-        return resultado;
-    }
+    var par = (List<int> valores) => valores.where((valor) => valor % 2 == 0).toList();
+    List<int> pares = par(numeros);
     print('Números pares: $pares');
 
     //10
-    List<Pessoa> pessoas = [
-        Pessoa(nome: 'Bruno', idade: 20),
-        Pessoa(nome: 'Carlos', idade: 22),
-        Pessoa(nome: 'Elisa', idade: 19),
-        Pessoa(nome: 'Ana', idade: 15),
-        Pessoa(nome: 'João', idade: 17),
-    ];
-    maioresDeIdade(pessoas);
-}
-
-void maioresDeIdade(List<Pessoa> pessoas) {
-    List<Pessoa> maiores = pessoas.where((pessoa) => pessoa.idade >= 18).toList();
-    for (Pessoa pessoa in maiores) {
-        print('${pessoa.nome} é maior de idade.');
+    for (Pessoa pessoa in Pessoa.values) {
+        pessoa.idade >= 18 ? print('${pessoa.nome} é maior de idade') : print('${pessoa.nome} é menor de idade');
     }
 }
