@@ -1,4 +1,5 @@
 import 'package:apk_invertexto/view/busca_cep_page.dart';
+import 'package:apk_invertexto/view/busca_ip_page.dart';
 import 'package:apk_invertexto/view/por_extenso_page.dart';
 import 'package:flutter/material.dart';
 
@@ -59,6 +60,24 @@ class HomePage extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => BuscaCepPage()),
+                );
+              },
+            ),
+            SizedBox(height: 30),
+            GestureDetector(
+              child: Row(
+                children: <Widget>[
+                  Icon(Icons.search, color: Colors.white, size: 50),
+                  Text(
+                    "Busca IP",
+                    style: TextStyle(color: Colors.white, fontSize: 20.0),
+                  ),
+                ],
+              ),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => BuscaIpPage()),
                 );
               },
             ),

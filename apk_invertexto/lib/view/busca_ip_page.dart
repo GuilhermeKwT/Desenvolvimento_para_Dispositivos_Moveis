@@ -1,14 +1,14 @@
 import 'package:apk_invertexto/service/invertexto_service.dart';
 import 'package:flutter/material.dart';
 
-class BuscaCepPage extends StatefulWidget {
-  const BuscaCepPage({super.key});
+class BuscaIpPage extends StatefulWidget {
+  const BuscaIpPage({super.key});
 
   @override
-  State<BuscaCepPage> createState() => _BuscaCepPageState();
+  State<BuscaIpPage> createState() => _BuscaIpPageState();
 }
 
-class _BuscaCepPageState extends State<BuscaCepPage> {
+class _BuscaIpPageState extends State<BuscaIpPage> {
   String? campo;
   String? resultado;
   final apiService = InvertextoService();
@@ -44,7 +44,7 @@ class _BuscaCepPageState extends State<BuscaCepPage> {
           children: <Widget>[
             TextField(
               decoration: InputDecoration(
-                labelText: 'Digite um CEP',
+                labelText: 'Digite um IP',
                 labelStyle: TextStyle(color: Colors.white),
                 border: OutlineInputBorder(),
               ),
@@ -53,7 +53,7 @@ class _BuscaCepPageState extends State<BuscaCepPage> {
               onSubmitted: (value) {
                 setState(() {
                   campo = value;
-                  _future = apiService.buscaCEP(campo);
+                  _future = apiService.buscaIP(campo);
                 });
               },
             ),
@@ -93,7 +93,7 @@ class _BuscaCepPageState extends State<BuscaCepPage> {
                               } else if (snapshot.error.toString().contains(
                                 '422',
                               )) {
-                                errorMsg = 'CEP inválido.';
+                                errorMsg = 'IP inválido.';
                               }
                               return Center(
                                 child: Text(
@@ -121,14 +121,26 @@ class _BuscaCepPageState extends State<BuscaCepPage> {
   Widget exibeResultado(BuildContext context, AsyncSnapshot snapshot) {
     String enderecoCompleto = '';
     if (snapshot.data != null) {
-      enderecoCompleto += snapshot.data["street"] ?? "Rua não disponível";
-      enderecoCompleto += "\n";
-      enderecoCompleto +=
-          snapshot.data["neighborhood"] ?? "Bairro não disponível";
-      enderecoCompleto += "\n";
       enderecoCompleto += snapshot.data["city"] ?? "Cidade não disponível";
       enderecoCompleto += "\n";
       enderecoCompleto += snapshot.data["state"] ?? "Estado não disponível";
+      enderecoCompleto += "\n";
+      enderecoCompleto += snapshot.data["country"] ?? "País não disponível";
+      enderecoCompleto += "\n";
+      enderecoCompleto +=
+          snapshot.data["continent"] ?? "Continente não disponível";
+      enderecoCompleto += "\n";
+      enderecoCompleto += "Fuso horário: ";
+      enderecoCompleto +=
+          snapshot.data["time_zone"] ?? "Fuso horário não disponível";
+      enderecoCompleto += "\n";
+      enderecoCompleto += "Latitude: ";
+      enderecoCompleto +=
+          snapshot.data["latitude"]?.toString() ?? "Latitude não disponível";
+      enderecoCompleto += "\n";
+      enderecoCompleto += "Longitude: ";
+      enderecoCompleto +=
+          snapshot.data["longitude"]?.toString() ?? "Longitude não disponível";
     }
 
     return Padding(

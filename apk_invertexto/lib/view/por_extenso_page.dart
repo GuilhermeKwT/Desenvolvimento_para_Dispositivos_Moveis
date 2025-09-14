@@ -126,13 +126,16 @@ class _PorExtensoPageState extends State<PorExtensoPage> {
                                 errorMsg =
                                     'Token de acesso inválido ou ausente.';
                               } else if (snapshot.error.toString().contains(
+                                    '404',
+                                  ) ||
+                                  snapshot.error.toString().contains(
+                                    'conexão',
+                                  )) {
+                                errorMsg = 'Erro de conexão.';
+                              } else if (snapshot.error.toString().contains(
                                 '422',
                               )) {
                                 errorMsg = 'Valor ausente ou inválido.';
-                              } else if (snapshot.error.toString().contains(
-                                '404',
-                              )) {
-                                errorMsg = 'Erro de conexão.';
                               }
                               return Center(
                                 child: Text(
