@@ -51,7 +51,6 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Marca
             Text(
               'Marca',
               style: TextStyle(
@@ -62,31 +61,16 @@ class _HomePageState extends State<HomePage> {
             const SizedBox(height: 8),
             _carregandoMarcas
                 ? const Center(child: CircularProgressIndicator())
-                : DropdownButtonFormField<dynamic>(
-                    initialValue: _marcaSelecionada,
-                    items: _marcas
-                        .map(
-                          (marca) => DropdownMenuItem(
-                            value: marca,
-                            child: Text(marca['name'].toString()),
-                          ),
-                        )
-                        .toList(),
-                    onChanged: (marca) {
-                      setState(() {
-                        _marcaSelecionada = marca;
-                      });
-                      final id = marca['code'].toString();
-                      _carregarModelos(id);
-                      _carregarAnos(id);
-                    },
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
+                : dropdownBase(_marcas, (marca) {
+                    setState(() {
+                      _marcaSelecionada = marca;
+                    });
+                    final id = marca['code'].toString();
+                    _carregarModelos(id);
+                    _carregarAnos(id);
+                  }),
             const SizedBox(height: 16),
 
-            // Modelo
             Text(
               'Modelo',
               style: TextStyle(
@@ -97,40 +81,18 @@ class _HomePageState extends State<HomePage> {
             const SizedBox(height: 8),
             _carregandoModelos
                 ? const Center(child: CircularProgressIndicator())
-                : DropdownButtonFormField<dynamic>(
-                    isExpanded: true,
-                    initialValue: _modeloSelecionado,
-                    items: _modelos.map((modelo) {
-                      final text = modelo['name'].toString();
-                      return DropdownMenuItem(
-                        value: modelo,
-                        child: Tooltip(
-                          message: text,
-                          child: Text(
-                            text,
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 1,
-                          ),
-                        ),
-                      );
-                    }).toList(),
-                    onChanged: (modelo) {
-                      setState(() {
-                        _modeloSelecionado = modelo;
-                      });
-                      if (_anoSelecionado == null && !_carregandoAnos) {
-                        final brandId = _marcaSelecionada['code'].toString();
-                        final modelId = modelo['code'].toString();
-                        _carregarAnos(brandId, modelId: modelId);
-                      }
-                    },
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
+                : dropdownBase(_modelos, (modelo) {
+                    setState(() {
+                      _modeloSelecionado = modelo;
+                    });
+                    if (_anoSelecionado == null && !_carregandoAnos) {
+                      final brandId = _marcaSelecionada['code'].toString();
+                      final modelId = modelo['code'].toString();
+                      _carregarAnos(brandId, modelId: modelId);
+                    }
+                  }),
             const SizedBox(height: 16),
 
-            // Ano
             Text(
               'Ano',
               style: TextStyle(
@@ -141,35 +103,14 @@ class _HomePageState extends State<HomePage> {
             const SizedBox(height: 8),
             _carregandoAnos
                 ? const Center(child: CircularProgressIndicator())
-                : DropdownButtonFormField<dynamic>(
-                    isExpanded: true,
-                    initialValue: _anoSelecionado,
-                    items: _anos.map((ano) {
-                      final text = ano['name'].toString();
-                      return DropdownMenuItem(
-                        value: ano,
-                        child: Tooltip(
-                          message: text,
-                          child: Text(
-                            text,
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 1,
-                          ),
-                        ),
-                      );
-                    }).toList(),
-                    onChanged: (ano) {
-                      setState(() => _anoSelecionado = ano);
-                      if (_modeloSelecionado == null && !_carregandoModelos) {
-                        final brandId = _marcaSelecionada['code'].toString();
-                        final anoId = ano['code'].toString();
-                        _carregarModelos(brandId, anoId: anoId);
-                      }
-                    },
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
+                : dropdownBase(_anos, (ano) {
+                    setState(() => _anoSelecionado = ano);
+                    if (_modeloSelecionado == null && !_carregandoModelos) {
+                      final brandId = _marcaSelecionada['code'].toString();
+                      final anoId = ano['code'].toString();
+                      _carregarModelos(brandId, anoId: anoId);
+                    }
+                  }),
 
             const SizedBox(height: 20),
 
@@ -242,7 +183,6 @@ class _HomePageState extends State<HomePage> {
                 if (!snapshot.hasData) return const SizedBox.shrink();
 
                 final data = snapshot.data!;
-                final resultado = _mapearResultadoVisivel(data);
 
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -256,7 +196,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                     const SizedBox(height: 12),
-                    exibirResultado(resultado),
+                    exibirResultado(data),
                   ],
                 );
               },
@@ -264,6 +204,25 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget dropdownBase(items, onChanged) {
+    return DropdownButtonFormField<dynamic>(
+      isExpanded: true,
+      initialValue: _anoSelecionado,
+      items: items.map((item) {
+        final text = item['name'].toString();
+        return DropdownMenuItem(
+          value: item,
+          child: Tooltip(
+            message: text,
+            child: Text(text, overflow: TextOverflow.ellipsis, maxLines: 1),
+          ),
+        );
+      }).toList(),
+      onChanged: onChanged,
+      decoration: const InputDecoration(border: OutlineInputBorder()),
     );
   }
 
@@ -364,53 +323,43 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  // Converte o JSON bruto da API para um mapa legível ao usuário
-  Map<String, String> _mapearResultadoVisivel(Map<String, dynamic> data) {
-    final Map<String, String> out = {};
-
-    void add(String chave, dynamic valor) {
-      if (valor == null) return;
-      out[chave] = valor.toString();
-    }
-
-    add('Marca', data['brand']);
-    add('Código FIPE', data['codeFipe']);
-    add('Combustível', data['fuel']);
-    add('Modelo', data['model']);
-    add('Ano do modelo', data['modelYear']);
-    add('Preço', data['price']);
-    add('Mês de referência', data['referenceMonth']);
-
-    return out;
-  }
-
-  Widget exibirResultado(Map<String, String> resultado) {
+  Widget exibirResultado(Map<String, dynamic> resultado) {
     return Card(
       color: Theme.of(context).colorScheme.primary.withAlpha(100),
       child: Padding(
         padding: const EdgeInsets.all(12),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: resultado.entries.map((e) {
-            return Padding(
-              padding: const EdgeInsets.symmetric(vertical: 6),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    flex: 3,
-                    child: Text(
-                      e.key,
-                      style: const TextStyle(fontWeight: FontWeight.w600),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(flex: 7, child: Text(e.value)),
-                ],
-              ),
-            );
-          }).toList(),
+          children: [
+            linhaResultado('Marca', resultado['brand'] ?? ''),
+            linhaResultado('Código FIPE', resultado['codeFipe'] ?? ''),
+            linhaResultado('Combustível', resultado['fuel'] ?? ''),
+            linhaResultado('Modelo', resultado['model'] ?? ''),
+            linhaResultado('Ano do modelo', resultado['modelYear'] ?? ''),
+            linhaResultado('Preço', resultado['price'] ?? ''),
+            linhaResultado('Mês de referência', resultado['referenceMonth'] ?? ''),
+          ],
         ),
+      ),
+    );
+  }
+
+  Widget linhaResultado(String chave, String valor) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            flex: 3,
+            child: Text(
+              chave,
+              style: const TextStyle(fontWeight: FontWeight.w600),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(flex: 7, child: Text(valor)),
+        ],
       ),
     );
   }

@@ -11,7 +11,6 @@ final ThemeData darkTheme = ThemeData(
 
 void main() {
   runApp(MaterialApp(
-    title: 'Flutter System Theme Demo',
     theme: lightTheme,
     darkTheme: darkTheme,
     themeMode: ThemeMode.system,
