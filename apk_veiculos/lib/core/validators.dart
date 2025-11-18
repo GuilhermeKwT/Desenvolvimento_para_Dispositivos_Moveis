@@ -1,7 +1,7 @@
 class AppValidators {
   static String? validateRenavam(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Renavam é obrigatório';
+      return null;
     }
 
     final cleanValue = value.replaceAll(RegExp(r'[^0-9]'), '');

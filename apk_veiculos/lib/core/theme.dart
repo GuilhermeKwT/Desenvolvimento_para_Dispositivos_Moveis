@@ -1,28 +1,28 @@
 import 'package:flutter/material.dart';
 
 class AppTheme {
-  // App colors (current theme)
+  // Cores do aplicativo
   static const Color primaryPurple = Color.fromARGB(255, 70, 10, 168);
   static const Color secondaryGray = Color.fromARGB(255, 42, 40, 44);
   static const Color darkGray = Color.fromARGB(255, 48, 48, 48);
   static const Color accentGray = Color.fromARGB(180, 48, 48, 48);
   static const Color borderGray = Color.fromARGB(120, 0, 0, 0);
 
-  // Card colors
+  // Cores dos Cards
   static const Color cardGradientStart = Color.fromARGB(238, 61, 61, 61);
   static const Color cardGradientEnd = Color.fromARGB(239, 32, 31, 34);
   static const Color cardShadow = Colors.black;
 
-  // Input field colors
+  // Cores dos Inputs
   static const Color inputFillColor = Colors.white;
   static const Color inputLabelColor = Colors.white;
   static const Color dropdownColor = Color.fromARGB(255, 48, 48, 48);
 
-  // Text colors
+  // Cores do texto
   static const Color textPrimary = Colors.white;
   static const Color textSecondary = Colors.white70;
 
-  // Other UI colors
+  // Outras cores
   static const Color plateBadgeBackground = Colors.black26;
   static const Color imagePlaceholderColor = Colors.black12;
 
@@ -59,7 +59,7 @@ class AppTheme {
     ),
   );
 
-  // Gradients
+  // Gradiente do aplicativo
   static const LinearGradient appGradient = LinearGradient(
     colors: [
       primaryPurple,
@@ -74,7 +74,7 @@ class AppTheme {
   static const double borderRadiusMedium = 12.0;
   static const double borderRadiusLarge = 15.0;
 
-  // Spacing
+  // Espaçamentos
   static const double spacingSmall = 6.0;
   static const double spacingMedium = 12.0;
   static const double spacingLarge = 14.0;

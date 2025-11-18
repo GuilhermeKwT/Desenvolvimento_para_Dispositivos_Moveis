@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 
 void main() {
   runApp(MaterialApp(
-    theme: AppTheme.darkTheme,
     darkTheme: AppTheme.darkTheme,
     themeMode: ThemeMode.dark,
     home: const HomePage(),

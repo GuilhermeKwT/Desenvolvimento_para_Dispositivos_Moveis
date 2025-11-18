@@ -62,18 +62,6 @@ class _CarUpdatePageState extends State<CarUpdatePage> {
   }
 
   @override
-  void dispose() {
-    _renavamController.dispose();
-    _modelController.dispose();
-    _brandController.dispose();
-    _yearController.dispose();
-    _colorController.dispose();
-    _plateController.dispose();
-    _fuelController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     final years = <String>[];
     final currentYear = DateTime.now().year;
@@ -100,9 +88,9 @@ class _CarUpdatePageState extends State<CarUpdatePage> {
             constraints: const BoxConstraints(maxWidth: 700),
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.white.withAlpha(10),
+                color: AppTheme.inputFillColor.withAlpha(10),
                 borderRadius: BorderRadius.circular(AppTheme.borderRadiusMedium),
-                border: Border.all(color: Colors.black26),
+                border: Border.all(color: AppTheme.borderGray),
               ),
               padding: const EdgeInsets.all(14.0),
               child: Form(
@@ -116,22 +104,20 @@ class _CarUpdatePageState extends State<CarUpdatePage> {
                         onTap: () => _selectImage(),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(AppTheme.borderRadiusSmall),
-                          child: Container(
-                            width: 140.0,
-                            height: 140.0,
-                            color: Colors.black12,
-                            child:
-                                _editedCar?.img != null &&
-                                    _editedCar!.img!.isNotEmpty
-                                ? Image.file(
-                                    File(_editedCar!.img!),
-                                    fit: BoxFit.cover,
-                                  )
-                                : Image.asset(
-                                    'assets/imgs/images.png',
-                                    fit: BoxFit.cover,
-                                  ),
-                          ),
+                            child: Container(
+                              width: 140.0,
+                              height: 140.0,
+                              color: AppTheme.imagePlaceholderColor,
+                              child: _editedCar?.img != null && _editedCar!.img!.isNotEmpty
+                                  ? Image.file(
+                                      File(_editedCar!.img!),
+                                      fit: BoxFit.cover,
+                                    )
+                                  : Image.asset(
+                                      'assets/imgs/images.avif',
+                                      fit: BoxFit.cover,
+                                    ),
+                            ),
                         ),
                       ),
                     ),
@@ -142,9 +128,9 @@ class _CarUpdatePageState extends State<CarUpdatePage> {
                           : null,
                       decoration: InputDecoration(
                         labelText: 'Tipo',
-                        labelStyle: GoogleFonts.poppins(color: Colors.white),
+                        labelStyle: GoogleFonts.poppins(color: AppTheme.inputLabelColor),
                         filled: true,
-                        fillColor: Colors.white.withAlpha(15),
+                        fillColor: AppTheme.inputFillColor.withAlpha(15),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(AppTheme.borderRadiusMedium),
                         ),
@@ -155,7 +141,7 @@ class _CarUpdatePageState extends State<CarUpdatePage> {
                               value: v,
                               child: Text(
                                 v,
-                                style: GoogleFonts.poppins(color: Colors.white),
+                                style: GoogleFonts.poppins(color: AppTheme.textPrimary),
                               ),
                             ),
                           )
@@ -166,7 +152,7 @@ class _CarUpdatePageState extends State<CarUpdatePage> {
                         });
                       },
                       dropdownColor: AppTheme.darkGray,
-                      style: GoogleFonts.poppins(color: Colors.white),
+                      style: GoogleFonts.poppins(color: AppTheme.textPrimary),
                       validator: (value) => value == null || value.isEmpty ? 'Tipo é obrigatório' : null,
                     ),
                     const SizedBox(height: 12),
@@ -271,7 +257,7 @@ class _CarUpdatePageState extends State<CarUpdatePage> {
           backgroundColor: AppTheme.darkGray,
           title: Text(
             'Selecione o ano',
-            style: GoogleFonts.poppins(color: Colors.white),
+            style: GoogleFonts.poppins(color: AppTheme.textPrimary),
           ),
           content: Container(
             width: double.maxFinite,
