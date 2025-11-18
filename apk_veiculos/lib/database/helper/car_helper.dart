@@ -26,7 +26,7 @@ class CarHelper {
       version: 1,
       onCreate: (Database db, int newVersion) async {
         await db.execute(
-          "CREATE TABLE $carTable($idColumn INTEGER PRIMARY KEY, $typeColumn TEXT, $renavamColumn TEXT, $modelColumn TEXT, $brandColumn TEXT, $yearColumn TEXT, $colorColumn TEXT, $plateColumn TEXT, $fuelColumn TEXT)",
+          "CREATE TABLE $carTable($idColumn INTEGER PRIMARY KEY, $typeColumn TEXT, $renavamColumn TEXT, $modelColumn TEXT, $brandColumn TEXT, $yearColumn TEXT, $colorColumn TEXT, $plateColumn TEXT, $fuelColumn TEXT, $imgColumn TEXT)",
         );
       },
     );
@@ -42,7 +42,7 @@ class CarHelper {
     Database dbCar = await db;
     List<Map<String, dynamic>> maps = await dbCar.query(
       carTable,
-      columns: [idColumn, typeColumn, renavamColumn, modelColumn, brandColumn, yearColumn, colorColumn, plateColumn, fuelColumn],
+      columns: [idColumn, typeColumn, renavamColumn, modelColumn, brandColumn, yearColumn, colorColumn, plateColumn, fuelColumn, imgColumn],
       where: "$idColumn = ?",
       whereArgs: [id],
     );

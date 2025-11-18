@@ -7,6 +7,7 @@ String yearColumn = 'yearColumn';
 String colorColumn = 'colorColumn';
 String plateColumn = 'plateColumn';
 String fuelColumn = 'fuelColumn';
+String imgColumn = 'imgColumn';
 String carTable = 'carTable';
 
 class Car {
@@ -20,6 +21,7 @@ class Car {
     required this.color,
     this.plate,
     this.fuel,
+    this.img,
   });
 
   int? id;
@@ -31,6 +33,7 @@ class Car {
   String color;
   String? plate;
   String? fuel;
+  String? img;
 
   Car.fromMap(Map<String, dynamic> map)
       : id = map[idColumn],
@@ -41,7 +44,8 @@ class Car {
         year = map[yearColumn],
         color = map[colorColumn],
         plate = map[plateColumn],
-        fuel = map[fuelColumn];
+        fuel = map[fuelColumn],
+        img = map[imgColumn];
 
   Map<String, dynamic> toMap() {
     final Map<String, dynamic> map = {
@@ -52,7 +56,8 @@ class Car {
       yearColumn: year,
       colorColumn: color,
       plateColumn: plate,
-      fuelColumn: fuel
+      fuelColumn: fuel,
+      imgColumn: img,
     };
     if (id != null) {
       map[idColumn] = id;
@@ -62,6 +67,6 @@ class Car {
 
   @override
   String toString() {
-    return 'Car{id: $id, type: $type, renavam: $renavam, model: $model, brand: $brand, year: $year, color: $color, plate: $plate, fuel: $fuel}';
+    return 'Car{id: $id, type: $type, renavam: $renavam, model: $model, brand: $brand, year: $year, color: $color, plate: $plate, fuel: $fuel, img: $img}';
   }
 }
