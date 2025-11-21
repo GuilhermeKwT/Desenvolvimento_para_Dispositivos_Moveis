@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application
-        android:label="apk_veiculos"
+        android:label="apk_venda_veiculos"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

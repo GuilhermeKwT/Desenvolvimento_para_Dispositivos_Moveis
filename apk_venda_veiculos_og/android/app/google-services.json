@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "606915163622",
+    "project_id": "venda-veiculos",
+    "storage_bucket": "venda-veiculos.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:606915163622:android:4843eb52c5096c89b2d227",
+        "android_client_info": {
+          "package_name": "com.example.apk_veiculos"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBXlq2w4AOaiyoJrFU_ywYwzf4PjRTKpVE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
