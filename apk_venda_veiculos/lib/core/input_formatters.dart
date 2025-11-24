@@ -90,3 +90,38 @@ class PlateMaskFormatter extends TextInputFormatter {
     );
   }
 }
+
+class PhoneMaskFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    final text = newValue.text;
+    if (text.isEmpty) {
+      return TextEditingValue.empty;
+    }
+
+    final buffer = StringBuffer();
+    for (int i = 0; i < text.length; i++) {
+      if (i == 0) {
+        buffer.write('(');
+      } else if (i == 2) {
+        buffer.write(') ');
+      } else if (i == 7) {
+        buffer.write('-');
+      }
+
+      buffer.write(text[i]);
+
+      if (i == 10) {
+        break;
+      }
+    }
+
+    return TextEditingValue(
+      text: buffer.toString(),
+      selection: TextSelection.collapsed(offset: buffer.length),
+    );
+  }
+}

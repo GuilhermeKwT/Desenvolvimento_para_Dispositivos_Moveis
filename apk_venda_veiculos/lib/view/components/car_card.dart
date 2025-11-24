@@ -1,10 +1,9 @@
 import 'dart:io';
 
-import 'package:apk_venda_veiculos/database/model/car_model.dart';
+import 'package:apk_venda_veiculos/service/entities/car_model.dart';
 import 'package:apk_venda_veiculos/core/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-
 
 class CarCard extends StatelessWidget {
   final Car car;
@@ -21,6 +20,7 @@ class CarCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final borderRadius = BorderRadius.circular(12.0);
+    bool _imageExists = File(car.img ?? '').existsSync();
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6.0),
@@ -34,10 +34,7 @@ class CarCard extends StatelessWidget {
             gradient: const LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [
-                AppTheme.cardGradientStart,
-                AppTheme.cardGradientEnd,
-              ],
+              colors: [AppTheme.cardGradientStart, AppTheme.cardGradientEnd],
             ),
             boxShadow: [
               BoxShadow(
@@ -56,17 +53,26 @@ class CarCard extends StatelessWidget {
               child: Row(
                 children: <Widget>[
                   ClipRRect(
-                    borderRadius: BorderRadius.circular(AppTheme.borderRadiusSmall),
+                    borderRadius: BorderRadius.circular(
+                      AppTheme.borderRadiusSmall,
+                    ),
                     child: Container(
                       width: 86.0,
                       height: 86.0,
                       color: AppTheme.imagePlaceholderColor,
-                      child: car.img != null
+                      child:
+                          car.img != null && car.img!.isNotEmpty && _imageExists
                           ? Image.file(
                               File(car.img!),
                               fit: BoxFit.cover,
                               width: 86,
                               height: 86,
+                              errorBuilder: (context, error, stackTrace) {
+                                return Image.asset(
+                                  'assets/imgs/images.avif',
+                                  fit: BoxFit.cover,
+                                );
+                              },
                             )
                           : Image.asset(
                               'assets/imgs/images.avif',
@@ -94,7 +100,11 @@ class CarCard extends StatelessWidget {
                         const SizedBox(height: 6),
                         Row(
                           children: [
-                            Icon(Icons.calendar_today, size: 14, color: AppTheme.textSecondary),
+                            Icon(
+                              Icons.calendar_today,
+                              size: 14,
+                              color: AppTheme.textSecondary,
+                            ),
                             const SizedBox(width: 6),
                             Text(
                               car.year,
@@ -106,10 +116,15 @@ class CarCard extends StatelessWidget {
                             ),
                             const Spacer(),
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 4,
+                              ),
                               decoration: BoxDecoration(
                                 color: AppTheme.plateBadgeBackground,
-                                borderRadius: BorderRadius.circular(AppTheme.borderRadiusSmall),
+                                borderRadius: BorderRadius.circular(
+                                  AppTheme.borderRadiusSmall,
+                                ),
                               ),
                               child: Text(
                                 car.plate ?? 'N/A',

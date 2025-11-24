@@ -24,7 +24,7 @@ class Car {
     this.img,
   });
 
-  int? id;
+  String? id;
   String type;
   String? renavam;
   String model;
@@ -36,16 +36,16 @@ class Car {
   String? img;
 
   Car.fromMap(Map<String, dynamic> map)
-      : id = map[idColumn],
-        type = map[typeColumn],
-        renavam = map[renavamColumn],
-        model = map[modelColumn],
-        brand = map[brandColumn],
-        year = map[yearColumn],
-        color = map[colorColumn],
-        plate = map[plateColumn],
-        fuel = map[fuelColumn],
-        img = map[imgColumn];
+    : id = map[idColumn],
+      type = map[typeColumn],
+      renavam = map[renavamColumn],
+      model = map[modelColumn],
+      brand = map[brandColumn],
+      year = map[yearColumn],
+      color = map[colorColumn],
+      plate = map[plateColumn],
+      fuel = map[fuelColumn],
+      img = map[imgColumn];
 
   Map<String, dynamic> toMap() {
     final Map<String, dynamic> map = {

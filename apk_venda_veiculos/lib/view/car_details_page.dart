@@ -1,10 +1,11 @@
 import 'dart:io';
 
-import 'package:apk_venda_veiculos/database/helper/car_helper.dart';
-import 'package:apk_venda_veiculos/database/model/car_model.dart';
+import 'package:apk_venda_veiculos/service/firestore_service.dart';
+import 'package:apk_venda_veiculos/service/entities/car_model.dart';
 import 'package:apk_venda_veiculos/view/car_update_page.dart';
 import 'package:apk_venda_veiculos/view/components/app_scaffold.dart';
 import 'package:apk_venda_veiculos/core/theme.dart';
+import 'package:apk_venda_veiculos/view/components/primary_button.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -18,13 +19,15 @@ class CarDetailsPage extends StatefulWidget {
 }
 
 class _CarDetailsPageState extends State<CarDetailsPage> {
-  final CarHelper _helper = CarHelper();
+  final FirestoreService _firestoreService = FirestoreService();
   late Car _car;
+  bool _imageExists = true;
 
   @override
   void initState() {
     super.initState();
     _car = widget.car;
+    _validateImage();
   }
 
   @override
@@ -46,8 +49,18 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
                   child: Container(
                     height: 250,
                     color: AppTheme.imagePlaceholderColor,
-                    child: _car.img != null && _car.img!.isNotEmpty
-                        ? Image.file(File(_car.img!), fit: BoxFit.cover)
+                    child:
+                        _imageExists && _car.img != null && _car.img!.isNotEmpty
+                        ? Image.file(
+                            File(_car.img!),
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Image.asset(
+                                'assets/imgs/images.avif',
+                                fit: BoxFit.cover,
+                              );
+                            },
+                          )
                         : Image.asset(
                             'assets/imgs/images.avif',
                             fit: BoxFit.cover,
@@ -89,28 +102,23 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
                 Row(
                   children: [
                     Expanded(
-                      child: ElevatedButton.icon(
+                      child: PrimaryButton(
                         onPressed: () => _editCar(),
-                        icon: const Icon(Icons.edit),
-                        label: const Text('Editar'),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppTheme.primaryPurple,
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                        ),
+                        icon: Icons.edit,
+                        label: 'Editar',
+                        fullWidth: true,
+                        padding: const EdgeInsets.symmetric(vertical: 12),
                       ),
                     ),
                     const SizedBox(width: 12),
                     Expanded(
-                      child: ElevatedButton.icon(
+                      child: PrimaryButton(
                         onPressed: () => _deleteCar(),
-                        icon: const Icon(Icons.delete),
-                        label: const Text('Excluir'),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.red[700],
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                        ),
+                        icon: Icons.delete,
+                        label: 'Excluir',
+                        fullWidth: true,
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        backgroundColor: Colors.red[700],
                       ),
                     ),
                   ],
@@ -198,10 +206,32 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
     );
 
     if (confirmed == true) {
-      await _helper.deleteCar(_car.id!);
-      if (mounted) {
-        Navigator.pop(context, true);
+      try {
+        if (_car.id != null) {
+          await _firestoreService.deleteCar(_car.id!);
+          if (!mounted) return;
+          Navigator.pop(context, true);
+        } else {
+          if (!mounted) return;
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Erro: ID do veículo não encontrado')),
+          );
+        }
+      } catch (e) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Erro ao deletar veículo: $e')));
       }
+    }
+  }
+
+  Future<void> _validateImage() async {
+    final exists = await File(_car.img ?? '').exists();
+    if (mounted) {
+      setState(() {
+        _imageExists = exists;
+      });
     }
   }
 }

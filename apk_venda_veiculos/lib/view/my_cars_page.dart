@@ -1,9 +1,10 @@
-import 'package:apk_venda_veiculos/database/helper/car_helper.dart';
-import 'package:apk_venda_veiculos/database/model/car_model.dart';
+import 'package:apk_venda_veiculos/service/entities/car_model.dart';
+import 'package:apk_venda_veiculos/service/firestore_service.dart';
 import 'package:apk_venda_veiculos/view/car_update_page.dart';
 import 'package:apk_venda_veiculos/view/car_details_page.dart';
 import 'package:apk_venda_veiculos/view/components/car_card.dart';
 import 'package:apk_venda_veiculos/view/components/app_scaffold.dart';
+import 'package:apk_venda_veiculos/view/components/primary_button.dart';
 import 'package:apk_venda_veiculos/core/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -16,8 +17,9 @@ class MyCarsPage extends StatefulWidget {
 }
 
 class _MyCarsPageState extends State<MyCarsPage> {
-  CarHelper helper = CarHelper();
+  final FirestoreService _firestoreService = FirestoreService();
   List<Car> cars = [];
+  Map<String, String> carDocIds = {};
 
   @override
   void initState() {
@@ -25,17 +27,11 @@ class _MyCarsPageState extends State<MyCarsPage> {
     _loadCars();
   }
 
-  Future<void> _loadCars() async {
-    final list = await helper.getAllCars();
-    setState(() {
-      cars = list;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return AppScaffold(
       title: 'Veículos',
+      showBackButton: true,
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           _addCar();
@@ -102,46 +98,38 @@ class _MyCarsPageState extends State<MyCarsPage> {
             const SizedBox(height: 16),
             SizedBox(
               width: double.infinity,
-              child: ElevatedButton.icon(
+              child: PrimaryButton(
                 onPressed: () {
                   Navigator.pop(context);
                   _editCarFromMenu(car);
                 },
-                icon: const Icon(Icons.edit),
-                label: const Text('Editar'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppTheme.primaryPurple,
-                  foregroundColor: Colors.white,
-                ),
+                icon: Icons.edit,
+                label: 'Editar',
+                fullWidth: true,
               ),
             ),
             const SizedBox(height: 8),
             SizedBox(
               width: double.infinity,
-              child: ElevatedButton.icon(
+              child: PrimaryButton(
                 onPressed: () {
                   Navigator.pop(context);
                   _deleteCarFromMenu(car);
                 },
-                icon: const Icon(Icons.delete),
-                label: const Text('Excluir'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red[700],
-                  foregroundColor: Colors.white,
-                ),
+                icon: Icons.delete,
+                label: 'Excluir',
+                fullWidth: true,
+                backgroundColor: Colors.red[700],
               ),
             ),
             const SizedBox(height: 8),
             SizedBox(
               width: double.infinity,
-              child: ElevatedButton(
+              child: PrimaryButton(
                 onPressed: () => Navigator.pop(context),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppTheme.darkGray,
-                  foregroundColor: AppTheme.textSecondary,
-                  side: const BorderSide(color: AppTheme.borderGray),
-                ),
-                child: const Text('Cancelar'),
+                label: 'Cancelar',
+                fullWidth: true,
+                backgroundColor: AppTheme.darkGray,
               ),
             ),
           ],
@@ -193,9 +181,40 @@ class _MyCarsPageState extends State<MyCarsPage> {
     );
 
     if (confirmed == true) {
-      final helper = CarHelper();
-      await helper.deleteCar(car.id!);
-      _loadCars();
+      try {
+        if (car.id != null) {
+          await _firestoreService.deleteCar(car.id!);
+          if (!mounted) return;
+          _loadCars();
+        } else {
+          if (!mounted) return;
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Erro: ID do documento não encontrado'),
+            ),
+          );
+        }
+      } catch (e) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Erro ao deletar veículo: $e')));
+      }
+    }
+  }
+
+  Future<void> _loadCars() async {
+    try {
+      final list = await _firestoreService.getAllCars();
+      if (!mounted) return;
+      setState(() {
+        cars = list;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Erro ao carregar veículos: $e')));
     }
   }
 }

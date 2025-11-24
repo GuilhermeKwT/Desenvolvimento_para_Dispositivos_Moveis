@@ -1,7 +1,7 @@
 import 'dart:io';
 
-import 'package:apk_venda_veiculos/database/helper/car_helper.dart';
-import 'package:apk_venda_veiculos/database/model/car_model.dart';
+import 'package:apk_venda_veiculos/service/firestore_service.dart';
+import 'package:apk_venda_veiculos/service/entities/car_model.dart';
 import 'package:apk_venda_veiculos/view/components/app_scaffold.dart';
 import 'package:apk_venda_veiculos/view/components/labeled_dropdown.dart';
 import 'package:apk_venda_veiculos/view/components/labeled_text_field.dart';
@@ -23,8 +23,9 @@ class CarUpdatePage extends StatefulWidget {
 class _CarUpdatePageState extends State<CarUpdatePage> {
   Car? _editedCar;
   final _formKey = GlobalKey<FormState>();
+  bool _imageExists = true;
 
-  final _helper = CarHelper();
+  final _firestoreService = FirestoreService();
 
   final _renavamController = TextEditingController();
   final _modelController = TextEditingController();
@@ -59,6 +60,7 @@ class _CarUpdatePageState extends State<CarUpdatePage> {
       _plateController.text = _editedCar?.plate ?? '';
       _fuelController.text = _editedCar?.fuel ?? '';
     }
+    _validateImage();
   }
 
   @override
@@ -81,6 +83,7 @@ class _CarUpdatePageState extends State<CarUpdatePage> {
 
     return AppScaffold(
       title: 'Veículos',
+      showBackButton: true,
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(12.0),
         child: Center(
@@ -89,7 +92,9 @@ class _CarUpdatePageState extends State<CarUpdatePage> {
             child: Container(
               decoration: BoxDecoration(
                 color: AppTheme.inputFillColor.withAlpha(10),
-                borderRadius: BorderRadius.circular(AppTheme.borderRadiusMedium),
+                borderRadius: BorderRadius.circular(
+                  AppTheme.borderRadiusMedium,
+                ),
                 border: Border.all(color: AppTheme.borderGray),
               ),
               padding: const EdgeInsets.all(14.0),
@@ -103,21 +108,32 @@ class _CarUpdatePageState extends State<CarUpdatePage> {
                       child: GestureDetector(
                         onTap: () => _selectImage(),
                         child: ClipRRect(
-                          borderRadius: BorderRadius.circular(AppTheme.borderRadiusSmall),
-                            child: Container(
-                              width: 140.0,
-                              height: 140.0,
-                              color: AppTheme.imagePlaceholderColor,
-                              child: _editedCar?.img != null && _editedCar!.img!.isNotEmpty
-                                  ? Image.file(
-                                      File(_editedCar!.img!),
-                                      fit: BoxFit.cover,
-                                    )
-                                  : Image.asset(
-                                      'assets/imgs/images.avif',
-                                      fit: BoxFit.cover,
-                                    ),
-                            ),
+                          borderRadius: BorderRadius.circular(
+                            AppTheme.borderRadiusSmall,
+                          ),
+                          child: Container(
+                            width: 140.0,
+                            height: 140.0,
+                            color: AppTheme.imagePlaceholderColor,
+                            child:
+                                _imageExists &&
+                                    _editedCar?.img != null &&
+                                    _editedCar!.img!.isNotEmpty
+                                ? Image.file(
+                                    File(_editedCar!.img!),
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return Image.asset(
+                                        'assets/imgs/images.avif',
+                                        fit: BoxFit.cover,
+                                      );
+                                    },
+                                  )
+                                : Image.asset(
+                                    'assets/imgs/images.avif',
+                                    fit: BoxFit.cover,
+                                  ),
+                          ),
                         ),
                       ),
                     ),
@@ -128,11 +144,15 @@ class _CarUpdatePageState extends State<CarUpdatePage> {
                           : null,
                       decoration: InputDecoration(
                         labelText: 'Tipo',
-                        labelStyle: GoogleFonts.poppins(color: AppTheme.inputLabelColor),
+                        labelStyle: GoogleFonts.poppins(
+                          color: AppTheme.inputLabelColor,
+                        ),
                         filled: true,
                         fillColor: AppTheme.inputFillColor.withAlpha(15),
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(AppTheme.borderRadiusMedium),
+                          borderRadius: BorderRadius.circular(
+                            AppTheme.borderRadiusMedium,
+                          ),
                         ),
                       ),
                       items: <String>['Carro', 'Onibus', 'Caminhão', 'Outro']
@@ -141,7 +161,9 @@ class _CarUpdatePageState extends State<CarUpdatePage> {
                               value: v,
                               child: Text(
                                 v,
-                                style: GoogleFonts.poppins(color: AppTheme.textPrimary),
+                                style: GoogleFonts.poppins(
+                                  color: AppTheme.textPrimary,
+                                ),
                               ),
                             ),
                           )
@@ -153,7 +175,9 @@ class _CarUpdatePageState extends State<CarUpdatePage> {
                       },
                       dropdownColor: AppTheme.darkGray,
                       style: GoogleFonts.poppins(color: AppTheme.textPrimary),
-                      validator: (value) => value == null || value.isEmpty ? 'Tipo é obrigatório' : null,
+                      validator: (value) => value == null || value.isEmpty
+                          ? 'Tipo é obrigatório'
+                          : null,
                     ),
                     const SizedBox(height: 12),
                     LabeledTextField(
@@ -168,14 +192,16 @@ class _CarUpdatePageState extends State<CarUpdatePage> {
                     LabeledTextField(
                       controller: _modelController,
                       label: 'Modelo',
-                      validator: (v) => v?.isEmpty == true ? 'Modelo é obrigatório' : null,
+                      validator: (v) =>
+                          v?.isEmpty == true ? 'Modelo é obrigatório' : null,
                       onChanged: (text) => _editedCar?.model = text,
                     ),
                     const SizedBox(height: 12),
                     LabeledTextField(
                       controller: _brandController,
                       label: 'Marca',
-                      validator: (v) => v?.isEmpty == true ? 'Marca é obrigatória' : null,
+                      validator: (v) =>
+                          v?.isEmpty == true ? 'Marca é obrigatória' : null,
                       onChanged: (text) => _editedCar?.brand = text,
                     ),
                     const SizedBox(height: 12),
@@ -183,7 +209,8 @@ class _CarUpdatePageState extends State<CarUpdatePage> {
                       controller: _yearController,
                       label: 'Ano',
                       readOnly: true,
-                      validator: (v) => v?.isEmpty == true ? 'Ano é obrigatório' : null,
+                      validator: (v) =>
+                          v?.isEmpty == true ? 'Ano é obrigatório' : null,
                       onTap: () => _showYearPicker(context),
                     ),
                     const SizedBox(height: 12),
@@ -196,7 +223,10 @@ class _CarUpdatePageState extends State<CarUpdatePage> {
                     LabeledTextField(
                       controller: _plateController,
                       label: 'Placa',
-                      inputFormatters: [UpperCaseTextFormatter(), PlateMaskFormatter()],
+                      inputFormatters: [
+                        UpperCaseTextFormatter(),
+                        PlateMaskFormatter(),
+                      ],
                       validator: AppValidators.validatePlate,
                       onChanged: (text) => _editedCar?.plate = text,
                     ),
@@ -237,6 +267,7 @@ class _CarUpdatePageState extends State<CarUpdatePage> {
     if (image != null) {
       setState(() {
         _editedCar?.img = image.path;
+        _imageExists = true;
       });
     }
   }
@@ -287,9 +318,9 @@ class _CarUpdatePageState extends State<CarUpdatePage> {
     if (!_formKey.currentState!.validate()) return;
 
     if (_editedCar?.year.isEmpty == true) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Ano é obrigatório')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Ano é obrigatório')));
       return;
     }
 
@@ -297,11 +328,32 @@ class _CarUpdatePageState extends State<CarUpdatePage> {
       _editedCar?.img = null;
     }
 
-    if (_editedCar!.id == null) {
-      _helper.saveCar(_editedCar!);
-    } else {
-      _helper.updateCar(_editedCar!);
+    _savingCar();
+  }
+
+  Future<void> _savingCar() async {
+    try {
+      if (_editedCar!.id == null) {
+        await _firestoreService.saveCar(_editedCar!);
+      } else {
+        await _firestoreService.updateCar(_editedCar!);
+      }
+      if (!mounted) return;
+      Navigator.pop(context, _editedCar);
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Erro ao salvar veículo: $e')));
     }
-    Navigator.pop(context, _editedCar);
+  }
+
+  Future<void> _validateImage() async {
+    final exists = await File(_editedCar?.img ?? '').exists();
+    if (mounted) {
+      setState(() {
+        _imageExists = exists;
+      });
+    }
   }
 }

@@ -1,3 +1,3 @@
 # apk_venda_veiculos
 
-A new Flutter project.
+Trabalho 3 da Disciplina de Desenvolvimento para Dispositívos Móveis

@@ -25,13 +25,20 @@ class LabeledDropdown extends StatelessWidget {
         labelStyle: GoogleFonts.poppins(color: AppTheme.inputLabelColor),
         filled: true,
         fillColor: AppTheme.inputFillColor.withAlpha(15),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(AppTheme.borderRadiusMedium)),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppTheme.borderRadiusMedium),
+        ),
       ),
       items: items
-          .map((e) => DropdownMenuItem(
-                value: e,
-                child: Text(e, style: GoogleFonts.poppins(color: AppTheme.textPrimary)),
-              ))
+          .map(
+            (e) => DropdownMenuItem(
+              value: e,
+              child: Text(
+                e,
+                style: GoogleFonts.poppins(color: AppTheme.textPrimary),
+              ),
+            ),
+          )
           .toList(),
       onChanged: onChanged,
       style: GoogleFonts.poppins(color: AppTheme.textPrimary),

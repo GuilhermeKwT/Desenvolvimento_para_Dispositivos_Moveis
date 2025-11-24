@@ -47,7 +47,9 @@ class LabeledTextField extends StatelessWidget {
         labelStyle: GoogleFonts.poppins(color: AppTheme.inputLabelColor),
         filled: true,
         fillColor: AppTheme.inputFillColor.withAlpha(15),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(AppTheme.borderRadiusMedium)),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppTheme.borderRadiusMedium),
+        ),
         suffixIcon: suffixIcon,
         errorStyle: GoogleFonts.poppins(color: Colors.red[300]),
       ),
