@@ -1,5 +1,5 @@
 import 'package:apk_venda_veiculos/model/car.dart';
-import 'package:apk_venda_veiculos/service/firestore_service.dart';
+import 'package:apk_venda_veiculos/service/car_service.dart';
 import 'package:apk_venda_veiculos/view/car_update_page.dart';
 import 'package:apk_venda_veiculos/view/car_details_page.dart';
 import 'package:apk_venda_veiculos/view/components/car_card.dart';
@@ -17,7 +17,7 @@ class MyCarsPage extends StatefulWidget {
 }
 
 class _MyCarsPageState extends State<MyCarsPage> {
-  final FirestoreService _firestoreService = FirestoreService();
+  final CarService _carService = CarService();
   List<Car> cars = [];
   Map<String, String> carDocIds = {};
 
@@ -30,7 +30,7 @@ class _MyCarsPageState extends State<MyCarsPage> {
   @override
   Widget build(BuildContext context) {
     return AppScaffold(
-      title: 'Veículos',
+      title: 'Meus Veículos',
       showBackButton: true,
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -39,38 +39,66 @@ class _MyCarsPageState extends State<MyCarsPage> {
         backgroundColor: AppTheme.primaryPurple,
         child: const Icon(Icons.add),
       ),
-      body: ListView.builder(
-        padding: const EdgeInsets.all(10),
-        itemCount: cars.length,
-        itemBuilder: (context, index) {
-          return CarCard(
-            car: cars[index],
-            onTap: () => _viewCarDetails(cars[index]),
-            onLongPress: () => _showCarMenu(context, cars[index]),
-          );
-        },
+      body: Stack(
+        children: [
+          Positioned.fill(
+            child: Center(
+              child: Image.asset(
+                'assets/imgs/car.png',
+                fit: BoxFit.contain,
+                color: Colors.white.withAlpha(30),
+                colorBlendMode: BlendMode.modulate,
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(left: 12, right: 12, top: 8),
+            child: ListView.separated(
+              separatorBuilder: (_, __) => const SizedBox(height: 8),
+              itemCount: cars.length,
+              itemBuilder: (context, index) {
+                return TweenAnimationBuilder(
+                  tween: Tween<double>(begin: 0, end: 1),
+                  duration: Duration(milliseconds: 350 + (index * 80)),
+                  builder: (context, value, child) {
+                    return Opacity(
+                      opacity: value,
+                      child: Transform.translate(
+                        offset: Offset(0, (1 - value) * 20),
+                        child: child,
+                      ),
+                    );
+                  },
+                  child: CarCard(
+                    car: cars[index],
+                    onTap: () => _viewCarDetails(cars[index]),
+                    onLongPress: () => _showCarMenu(context, cars[index]),
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
 
   void _addCar() async {
-    final updatedContact = await Navigator.push(
+    final updated = await Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => CarUpdatePage(car: null)),
     );
-    if (updatedContact != null) {
+    if (updated != null) {
       _loadCars();
     }
   }
 
   void _viewCarDetails(Car car) async {
-    final result = await Navigator.push(
+    await Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => CarDetailsPage(car: car)),
     );
-    if (result != null) {
-      _loadCars();
-    }
+    _loadCars();
   }
 
   void _showCarMenu(BuildContext context, Car car) {
@@ -183,7 +211,7 @@ class _MyCarsPageState extends State<MyCarsPage> {
     if (confirmed == true) {
       try {
         if (car.id != null) {
-          await _firestoreService.deleteCar(car.id!);
+          await _carService.deleteCar(car.id!);
           if (!mounted) return;
           _loadCars();
         } else {
@@ -205,7 +233,7 @@ class _MyCarsPageState extends State<MyCarsPage> {
 
   Future<void> _loadCars() async {
     try {
-      final list = await _firestoreService.getAllCars();
+      final list = await _carService.getAllCars();
       if (!mounted) return;
       setState(() {
         cars = list;

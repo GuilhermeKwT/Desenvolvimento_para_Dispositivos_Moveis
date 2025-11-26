@@ -1,10 +1,10 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:apk_venda_veiculos/model/car.dart';
+import 'package:apk_venda_veiculos/service/auth_service.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-class FirestoreService {
+class CarService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final AuthService _auth = AuthService();
 
   CollectionReference get _carsCollection {
     final userId = _auth.currentUser?.uid;
@@ -113,13 +113,5 @@ class FirestoreService {
       fuel: data['fuel'],
       img: data['img'],
     );
-  }
-
-  bool isUserAuthenticated() {
-    return _auth.currentUser != null;
-  }
-
-  String? getCurrentUserId() {
-    return _auth.currentUser?.uid;
   }
 }

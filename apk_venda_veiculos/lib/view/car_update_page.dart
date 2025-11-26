@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:apk_venda_veiculos/service/firestore_service.dart';
+import 'package:apk_venda_veiculos/service/car_service.dart';
 import 'package:apk_venda_veiculos/model/car.dart';
 import 'package:apk_venda_veiculos/view/components/app_scaffold.dart';
 import 'package:apk_venda_veiculos/view/components/labeled_dropdown.dart';
@@ -25,7 +25,7 @@ class _CarUpdatePageState extends State<CarUpdatePage> {
   final _formKey = GlobalKey<FormState>();
   bool _imageExists = true;
 
-  final _firestoreService = FirestoreService();
+  final CarService _carService = CarService();
 
   final _renavamController = TextEditingController();
   final _modelController = TextEditingController();
@@ -334,9 +334,9 @@ class _CarUpdatePageState extends State<CarUpdatePage> {
   Future<void> _savingCar() async {
     try {
       if (_editedCar!.id == null) {
-        await _firestoreService.saveCar(_editedCar!);
+        await _carService.saveCar(_editedCar!);
       } else {
-        await _firestoreService.updateCar(_editedCar!);
+        await _carService.updateCar(_editedCar!);
       }
       if (!mounted) return;
       Navigator.pop(context, _editedCar);

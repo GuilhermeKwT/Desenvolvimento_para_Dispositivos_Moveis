@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:apk_venda_veiculos/service/firestore_service.dart';
+import 'package:apk_venda_veiculos/service/car_service.dart';
 import 'package:apk_venda_veiculos/model/car.dart';
 import 'package:apk_venda_veiculos/view/car_update_page.dart';
 import 'package:apk_venda_veiculos/view/components/app_scaffold.dart';
@@ -19,7 +19,7 @@ class CarDetailsPage extends StatefulWidget {
 }
 
 class _CarDetailsPageState extends State<CarDetailsPage> {
-  final FirestoreService _firestoreService = FirestoreService();
+  final CarService _carService = CarService();
   late Car _car;
   bool _imageExists = true;
 
@@ -208,7 +208,7 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
     if (confirmed == true) {
       try {
         if (_car.id != null) {
-          await _firestoreService.deleteCar(_car.id!);
+          await _carService.deleteCar(_car.id!);
           if (!mounted) return;
           Navigator.pop(context, true);
         } else {

@@ -7,6 +7,7 @@ class AppScaffold extends StatelessWidget {
   final Widget? floatingActionButton;
   final PreferredSizeWidget? bottom;
   final bool showBackButton;
+  final Widget? bottomBar;
 
   const AppScaffold({
     super.key,
@@ -15,6 +16,7 @@ class AppScaffold extends StatelessWidget {
     this.floatingActionButton,
     this.bottom,
     this.showBackButton = false,
+    this.bottomBar,
   });
 
   @override
@@ -43,6 +45,7 @@ class AppScaffold extends StatelessWidget {
         ),
         body: body,
         floatingActionButton: floatingActionButton,
+        bottomNavigationBar: bottomBar,
       ),
     );
   }

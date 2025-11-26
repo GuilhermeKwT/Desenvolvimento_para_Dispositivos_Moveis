@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:apk_venda_veiculos/model/car.dart';
 import 'package:apk_venda_veiculos/core/theme.dart';
+import 'package:apk_venda_veiculos/view/components/mercosul_plate.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -19,7 +20,7 @@ class CarCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final borderRadius = BorderRadius.circular(12.0);
+    final borderRadius = BorderRadius.circular(18.0);
     bool _imageExists = File(car.img ?? '').existsSync();
 
     return Padding(
@@ -34,17 +35,21 @@ class CarCard extends StatelessWidget {
             gradient: const LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [AppTheme.cardGradientStart, AppTheme.cardGradientEnd],
+              colors: [
+                AppTheme.cardGradientStart,
+                AppTheme.cardGradientEnd,
+              ],
             ),
             boxShadow: [
               BoxShadow(
-                color: AppTheme.cardShadow.withAlpha(65),
-                blurRadius: 8,
-                offset: const Offset(0, 4),
+                color: Colors.black.withAlpha(120),
+                blurRadius: 10,
+                offset: Offset(0, 4),
               ),
             ],
-            border: Border.all(color: Colors.black26, width: 1),
+            border: Border.all(color: Colors.black38, width: 1),
           ),
+
           child: InkWell(
             onTap: onTap,
             onLongPress: onLongPress,
@@ -59,7 +64,7 @@ class CarCard extends StatelessWidget {
                     child: Container(
                       width: 86.0,
                       height: 86.0,
-                      color: AppTheme.imagePlaceholderColor,
+                      color: AppTheme.primaryPurple,
                       child:
                           car.img != null && car.img!.isNotEmpty && _imageExists
                           ? Image.file(
@@ -74,11 +79,12 @@ class CarCard extends StatelessWidget {
                                 );
                               },
                             )
-                          : Image.asset(
-                              'assets/imgs/images.avif',
-                              fit: BoxFit.cover,
-                              width: 86,
-                              height: 86,
+                          : Center(
+                              child: Icon(
+                                Icons.directions_car_filled,
+                                size: 60,
+                                color: AppTheme.textPrimary,
+                              ),
                             ),
                     ),
                   ),
@@ -100,50 +106,49 @@ class CarCard extends StatelessWidget {
                         const SizedBox(height: 6),
                         Row(
                           children: [
-                            Icon(
-                              Icons.calendar_today,
-                              size: 14,
-                              color: AppTheme.textSecondary,
-                            ),
-                            const SizedBox(width: 6),
-                            Text(
-                              car.year,
-                              style: GoogleFonts.poppins(
-                                color: AppTheme.textSecondary,
-                                fontSize: 13,
-                                fontWeight: FontWeight.w500,
-                              ),
+                            Column(
+                              children: [
+                                Row(
+                                  children: [
+                                    Icon(
+                                      Icons.calendar_today,
+                                      size: 14,
+                                      color: AppTheme.textSecondary,
+                                    ),
+                                    const SizedBox(width: 6),
+                                    Text(
+                                      car.year,
+                                      style: GoogleFonts.poppins(
+                                        color: AppTheme.textSecondary,
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 4,),
+                                Row(
+                                  children: [
+                                    Icon(
+                                      Icons.color_lens,
+                                      size: 14,
+                                      color: AppTheme.textSecondary,
+                                    ),
+                                    const SizedBox(width: 6),
+                                    Text(
+                                      car.color.isNotEmpty ? car.color : 'N/A',
+                                      style: GoogleFonts.poppins(
+                                        color: AppTheme.textSecondary,
+                                        fontSize: 13,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
                             ),
                             const Spacer(),
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 4,
-                              ),
-                              decoration: BoxDecoration(
-                                color: AppTheme.plateBadgeBackground,
-                                borderRadius: BorderRadius.circular(
-                                  AppTheme.borderRadiusSmall,
-                                ),
-                              ),
-                              child: Text(
-                                car.plate ?? 'N/A',
-                                style: GoogleFonts.poppins(
-                                  color: AppTheme.textPrimary,
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
+                            MercosulPlate(plate: car.plate ?? 'N/A'),
                           ],
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          car.color.isNotEmpty ? car.color : '',
-                          style: GoogleFonts.poppins(
-                            color: AppTheme.textSecondary,
-                            fontSize: 13,
-                          ),
                         ),
                       ],
                     ),
