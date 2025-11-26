@@ -4,7 +4,7 @@ import 'package:apk_venda_veiculos/core/theme.dart';
 import 'package:apk_venda_veiculos/view/components/primary_button.dart';
 import 'package:apk_venda_veiculos/view/components/feature_card.dart';
 import 'package:apk_venda_veiculos/view/profile_update_page.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:apk_venda_veiculos/service/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -17,11 +17,56 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   String? _userName;
+  final _authService = AuthService();
 
   @override
   void initState() {
     super.initState();
     _loadUserData();
+  }
+
+  void _loadUserData() {
+    final user = _authService.currentUser;
+    setState(() {
+      _userName = user?.displayName ?? user?.email ?? 'Usuário';
+    });
+  }
+
+  Future<void> _logout() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: AppTheme.darkGray,
+        title: Text(
+          'Confirmar saída',
+          style: GoogleFonts.poppins(color: AppTheme.textPrimary),
+        ),
+        content: Text(
+          'Tem certeza que deseja sair?',
+          style: GoogleFonts.poppins(color: AppTheme.textSecondary),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text(
+              'Cancelar',
+              style: GoogleFonts.poppins(color: AppTheme.textPrimary),
+            ),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: Text(
+              'Sair',
+              style: GoogleFonts.poppins(color: Colors.red[400]),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true) {
+      await _authService.signOut();
+    }
   }
 
   @override
@@ -36,9 +81,7 @@ class _HomePageState extends State<HomePage> {
             Container(
               decoration: BoxDecoration(
                 color: AppTheme.inputFillColor.withAlpha(10),
-                borderRadius: BorderRadius.circular(
-                  AppTheme.borderRadiusMedium,
-                ),
+                borderRadius: BorderRadius.circular(AppTheme.borderRadiusMedium),
                 border: Border.all(color: AppTheme.borderGray),
               ),
               padding: const EdgeInsets.all(16.0),
@@ -99,49 +142,5 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
     );
-  }
-
-  void _loadUserData() {
-    final user = FirebaseAuth.instance.currentUser;
-    setState(() {
-      _userName = user?.displayName ?? user?.email ?? 'Usuário';
-    });
-  }
-
-  Future<void> _logout() async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: AppTheme.darkGray,
-        title: Text(
-          'Confirmar saída',
-          style: GoogleFonts.poppins(color: AppTheme.textPrimary),
-        ),
-        content: Text(
-          'Tem certeza que deseja sair?',
-          style: GoogleFonts.poppins(color: AppTheme.textSecondary),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: Text(
-              'Cancelar',
-              style: GoogleFonts.poppins(color: AppTheme.textPrimary),
-            ),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: Text(
-              'Sair',
-              style: GoogleFonts.poppins(color: Colors.red[400]),
-            ),
-          ),
-        ],
-      ),
-    );
-
-    if (confirmed == true) {
-      await FirebaseAuth.instance.signOut();
-    }
   }
 }

@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:apk_venda_veiculos/service/entities/car_model.dart';
+import 'package:apk_venda_veiculos/model/car.dart';
 import 'package:apk_venda_veiculos/core/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';

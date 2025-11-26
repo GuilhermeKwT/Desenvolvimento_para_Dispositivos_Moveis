@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:apk_venda_veiculos/service/firestore_service.dart';
-import 'package:apk_venda_veiculos/service/entities/car_model.dart';
+import 'package:apk_venda_veiculos/model/car.dart';
 import 'package:apk_venda_veiculos/view/car_update_page.dart';
 import 'package:apk_venda_veiculos/view/components/app_scaffold.dart';
 import 'package:apk_venda_veiculos/core/theme.dart';

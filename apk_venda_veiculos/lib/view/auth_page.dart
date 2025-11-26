@@ -1,3 +1,4 @@
+import 'package:apk_venda_veiculos/service/auth_service.dart';
 import 'package:apk_venda_veiculos/view/home_page.dart';
 import 'package:apk_venda_veiculos/view/login_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -10,7 +11,7 @@ class AuthPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: StreamBuilder<User?>(
-        stream: FirebaseAuth.instance.authStateChanges(),
+        stream: AuthService().authStateChanges,
         builder: ((context, snapshot) {
           if (snapshot.hasData) {
             return HomePage();

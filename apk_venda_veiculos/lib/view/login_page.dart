@@ -1,5 +1,5 @@
 import 'package:apk_venda_veiculos/core/validators.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:apk_venda_veiculos/service/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -21,9 +21,16 @@ class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _authService = AuthService();
   bool _loading = false;
   bool _obscure = true;
 
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -128,8 +135,9 @@ class _LoginPageState extends State<LoginPage> {
                                     return;
                                   }
                                   try {
-                                    await FirebaseAuth.instance
-                                        .sendPasswordResetEmail(email: email);
+                                    await _authService
+                                        .sendPasswordResetEmail(email);
+                                    if (!mounted) return;
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
                                         content: Text(
@@ -137,10 +145,11 @@ class _LoginPageState extends State<LoginPage> {
                                         ),
                                       ),
                                     );
-                                  } on FirebaseAuthException catch (e) {
+                                  } catch (e) {
+                                    if (!mounted) return;
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
-                                        content: Text(e.message ?? 'Erro'),
+                                        content: Text(e.toString()),
                                       ),
                                     );
                                   }
@@ -185,7 +194,7 @@ class _LoginPageState extends State<LoginPage> {
     try {
       final email = _emailController.text.trim();
       final password = _passwordController.text;
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
+      await _authService.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
@@ -195,16 +204,10 @@ class _LoginPageState extends State<LoginPage> {
         context,
         MaterialPageRoute(builder: (_) => const MyCarsPage()),
       );
-    } on FirebaseAuthException catch (e) {
-      final message = 'Erro ao autenticar';
-      if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(message)));
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Erro inesperado ao autenticar')),
+        SnackBar(content: Text(e.toString())),
       );
     } finally {
       if (mounted) setState(() => _loading = false);

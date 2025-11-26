@@ -1,6 +1,6 @@
 import 'package:apk_venda_veiculos/core/input_formatters.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:apk_venda_veiculos/service/auth_service.dart';
+import 'package:apk_venda_veiculos/service/user_service.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -26,9 +26,21 @@ class _RegisterPageState extends State<RegisterPage> {
   final _phoneController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
+  final _authService = AuthService();
+  final _userService = UserService();
   bool _loading = false;
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _emailController.dispose();
+    _phoneController.dispose();
+    _passwordController.dispose();
+    _confirmPasswordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -227,45 +239,30 @@ class _RegisterPageState extends State<RegisterPage> {
       final name = _nameController.text.trim();
       final phone = _phoneController.text.trim();
 
-      final userCredential = await FirebaseAuth.instance
-          .createUserWithEmailAndPassword(email: email, password: password);
+      final user = await _authService.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
 
-      await userCredential.user?.updateDisplayName(name);
+      if (user == null) throw Exception('Erro ao criar usuário');
 
-      await FirebaseFirestore.instance
-          .collection('users')
-          .doc(userCredential.user!.uid)
-          .set({
-            'name': name,
-            'email': email,
-            'phone': phone,
-            'createdAt': DateTime.now(),
-            'updatedAt': DateTime.now(),
-          });
+      await _authService.updateDisplayName(name);
+
+      await _userService.createUserDocument(
+        name: name,
+        email: email,
+        phone: phone,
+      );
 
       if (!mounted) return;
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (_) => const MyCarsPage()),
       );
-    } on FirebaseAuthException catch (e) {
-      String message;
-      if (e.code == 'email-already-in-use') {
-        message = 'Este email já está registrado';
-      } else if (e.code == 'weak-password') {
-        message = 'Senha fraca. Use uma senha mais forte';
-      } else {
-        message = e.message ?? 'Erro ao registrar';
-      }
-
-      if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(message)));
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Erro inesperado ao registrar')),
+        SnackBar(content: Text(e.toString())),
       );
     } finally {
       if (mounted) setState(() => _loading = false);

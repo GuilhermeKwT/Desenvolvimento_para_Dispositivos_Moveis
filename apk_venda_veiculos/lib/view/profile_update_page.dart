@@ -1,5 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -9,6 +7,8 @@ import 'package:apk_venda_veiculos/view/components/labeled_text_field.dart';
 import 'package:apk_venda_veiculos/core/theme.dart';
 import 'package:apk_venda_veiculos/core/input_formatters.dart';
 import 'package:apk_venda_veiculos/core/validators.dart';
+import 'package:apk_venda_veiculos/service/auth_service.dart';
+import 'package:apk_venda_veiculos/service/user_service.dart';
 
 class ProfileUpdatePage extends StatefulWidget {
   const ProfileUpdatePage({super.key});
@@ -22,15 +22,66 @@ class _ProfileUpdatePageState extends State<ProfileUpdatePage> {
   final _nameController = TextEditingController();
   final _phoneController = TextEditingController();
   final _emailController = TextEditingController();
+  final _authService = AuthService();
+  final _userService = UserService();
   bool _loading = false;
-
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   @override
   void initState() {
     super.initState();
     _loadUserData();
+  }
+
+  Future<void> _loadUserData() async {
+    final user = _authService.currentUser;
+    if (user == null) return;
+    _emailController.text = user.email ?? '';
+    _nameController.text = user.displayName ?? '';
+
+    try {
+      final userData = await _userService.getUserData();
+      if (userData != null && userData['phone'] != null) {
+        _phoneController.text = userData['phone'];
+      }
+    } catch (e) {
+      // fail silently
+    }
+    if (mounted) setState(() {});
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _phoneController.dispose();
+    _emailController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _saveProfile() async {
+    if (!_formKey.currentState!.validate()) return;
+    setState(() => _loading = true);
+
+    final name = _nameController.text.trim();
+    final phone = _phoneController.text.trim();
+
+    try {
+      await _authService.updateDisplayName(name);
+
+      await _userService.updateUserData(
+        name: name,
+        phone: phone,
+      );
+
+      if (!mounted) return;
+      Navigator.pop(context, true);
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString())),
+      );
+    } finally {
+      if (mounted) setState(() => _loading = false);
+    }
   }
 
   @override
@@ -45,9 +96,7 @@ class _ProfileUpdatePageState extends State<ProfileUpdatePage> {
             child: Container(
               decoration: BoxDecoration(
                 color: AppTheme.inputFillColor.withAlpha(10),
-                borderRadius: BorderRadius.circular(
-                  AppTheme.borderRadiusMedium,
-                ),
+                borderRadius: BorderRadius.circular(AppTheme.borderRadiusMedium),
                 border: Border.all(color: AppTheme.borderGray),
               ),
               padding: const EdgeInsets.all(18.0),
@@ -135,64 +184,5 @@ class _ProfileUpdatePageState extends State<ProfileUpdatePage> {
             : const Icon(Icons.save),
       ),
     );
-  }
-
-  Future<void> _loadUserData() async {
-    final user = _auth.currentUser;
-    if (user == null) return;
-    _emailController.text = user.email ?? '';
-    _nameController.text = user.displayName ?? '';
-
-    try {
-      final doc = await _firestore.collection('users').doc(user.uid).get();
-      if (doc.exists) {
-        final data = doc.data();
-        if (data != null && data['phone'] != null) {
-          _phoneController.text = data['phone'];
-        }
-      }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Erro ao carregar dados do usuário: $e')),
-      );
-    }
-    if (mounted) setState(() {});
-  }
-
-  Future<void> _saveProfile() async {
-    if (!_formKey.currentState!.validate()) return;
-    setState(() => _loading = true);
-
-    final user = _auth.currentUser;
-    if (user == null) return;
-
-    final name = _nameController.text.trim();
-    final phone = _phoneController.text.trim();
-
-    try {
-      await user.updateDisplayName(name);
-
-      await _firestore.collection('users').doc(user.uid).set({
-        'name': name,
-        'phone': phone,
-        'email': user.email,
-        'updatedAt': DateTime.now(),
-      }, SetOptions(merge: true));
-
-      if (!mounted) return;
-      Navigator.pop(context, true);
-    } on FirebaseAuthException catch (e) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.message ?? 'Erro ao atualizar perfil')),
-      );
-    } catch (e) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Erro ao atualizar perfil: $e')));
-    } finally {
-      if (mounted) setState(() => _loading = false);
-    }
   }
 }
