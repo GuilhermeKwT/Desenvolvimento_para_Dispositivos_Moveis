@@ -7,7 +7,7 @@ import 'package:apk_venda_veiculos/view/components/app_scaffold.dart';
 import 'package:apk_venda_veiculos/view/components/labeled_text_field.dart';
 import 'package:apk_venda_veiculos/view/components/primary_button.dart';
 import 'package:apk_venda_veiculos/core/theme.dart';
-import 'package:apk_venda_veiculos/view/my_cars_page.dart';
+import 'package:apk_venda_veiculos/view/home_page.dart';
 import 'package:apk_venda_veiculos/view/register_page.dart';
 
 class LoginPage extends StatefulWidget {
@@ -202,7 +202,7 @@ class _LoginPageState extends State<LoginPage> {
       if (!mounted) return;
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const MyCarsPage()),
+        MaterialPageRoute(builder: (_) => const HomePage()),
       );
     } catch (e) {
       if (!mounted) return;
