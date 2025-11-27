@@ -1,3 +1,3 @@
 # apk_veiculos
 
-A new Flutter project.
+Trabalho 2 da Disciplina de Desenvolvimento para Dispositívos Móveis
