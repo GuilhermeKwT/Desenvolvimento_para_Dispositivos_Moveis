@@ -77,7 +77,7 @@ class _HomePageState extends State<HomePage> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
+          children: <Widget>[
             Container(
               decoration: BoxDecoration(
                 color: AppTheme.inputFillColor.withAlpha(10),
@@ -86,7 +86,7 @@ class _HomePageState extends State<HomePage> {
               ),
               padding: const EdgeInsets.all(16.0),
               child: Column(
-                children: [
+                children: <Widget>[
                   Text(
                     'Bem-vindo!',
                     style: GoogleFonts.poppins(

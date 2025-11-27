@@ -54,11 +54,11 @@ class _LoginPageState extends State<LoginPage> {
                 key: _formKey,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
+                  children: <Widget>[
                     Align(
                       alignment: Alignment.center,
                       child: Column(
-                        children: [
+                        children: <Widget>[
                           Container(
                             width: 100,
                             height: 100,
@@ -118,7 +118,7 @@ class _LoginPageState extends State<LoginPage> {
                     const SizedBox(height: 12),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
+                      children: <Widget>[
                         TextButton(
                           onPressed: _loading
                               ? null

@@ -44,7 +44,9 @@ class _ProfileUpdatePageState extends State<ProfileUpdatePage> {
         _phoneController.text = userData['phone'];
       }
     } catch (e) {
-      // fail silently
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Erro ao carregar dados do usuário')),
+      );
     }
     if (mounted) setState(() {});
   }
@@ -104,11 +106,11 @@ class _ProfileUpdatePageState extends State<ProfileUpdatePage> {
                 key: _formKey,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
+                  children: <Widget>[
                     Align(
                       alignment: Alignment.center,
                       child: Column(
-                        children: [
+                        children: <Widget>[
                           Container(
                             width: 100,
                             height: 100,

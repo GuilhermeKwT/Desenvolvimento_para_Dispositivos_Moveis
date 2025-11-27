@@ -105,44 +105,56 @@ class CarCard extends StatelessWidget {
                         ),
                         const SizedBox(height: 6),
                         Row(
-                          children: [
+                          children: <Widget>[
                             Column(
-                              children: [
-                                Row(
-                                  children: [
-                                    Icon(
-                                      Icons.calendar_today,
-                                      size: 14,
-                                      color: AppTheme.textSecondary,
-                                    ),
-                                    const SizedBox(width: 6),
-                                    Text(
-                                      car.year,
-                                      style: GoogleFonts.poppins(
+                              children: <Widget>[
+                                SizedBox(
+                                  width: 120,
+                                  child: Row(
+                                    children: [
+                                      Icon(
+                                        Icons.calendar_today,
+                                        size: 14,
                                         color: AppTheme.textSecondary,
-                                        fontSize: 13,
-                                        fontWeight: FontWeight.w500,
                                       ),
-                                    ),
-                                  ],
+                                      const SizedBox(width: 6),
+                                      Text(
+                                        car.year,
+                                        style: GoogleFonts.poppins(
+                                          color: AppTheme.textSecondary,
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                                const SizedBox(height: 4,),
-                                Row(
-                                  children: [
-                                    Icon(
-                                      Icons.color_lens,
-                                      size: 14,
-                                      color: AppTheme.textSecondary,
-                                    ),
-                                    const SizedBox(width: 6),
-                                    Text(
-                                      car.color.isNotEmpty ? car.color : 'N/A',
-                                      style: GoogleFonts.poppins(
+                                const SizedBox(height: 4),
+                                SizedBox(
+                                  width: 120,
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: <Widget>[
+                                      Icon(
+                                        Icons.color_lens,
+                                        size: 14,
                                         color: AppTheme.textSecondary,
-                                        fontSize: 13,
                                       ),
-                                    ),
-                                  ],
+                                      const SizedBox(width: 6),
+                                      Expanded(
+                                        child: Text(
+                                          car.color.isNotEmpty
+                                              ? car.color
+                                              : 'N/A',
+                                          overflow: TextOverflow.ellipsis,
+                                          style: GoogleFonts.poppins(
+                                            color: AppTheme.textSecondary,
+                                            fontSize: 13,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ],
                             ),

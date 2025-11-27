@@ -35,7 +35,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return AppScaffold(
-      title: 'Veículos',
+      title: 'Meus Veículos',
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           _addCar();
@@ -43,16 +43,46 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: AppTheme.primaryPurple,
         child: const Icon(Icons.add),
       ),
-      body: ListView.builder(
-        padding: const EdgeInsets.all(10),
-        itemCount: cars.length,
-        itemBuilder: (context, index) {
-          return CarCard(
-            car: cars[index],
-            onTap: () => _viewCarDetails(cars[index]),
-            onLongPress: () => _showCarMenu(context, cars[index]),
-          );
-        },
+      body: Stack(
+        children: [
+          Positioned.fill(
+            child: Center(
+              child: Image.asset(
+                'assets/imgs/car.png',
+                fit: BoxFit.contain,
+                color: Colors.white.withAlpha(30),
+                colorBlendMode: BlendMode.modulate,
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(left: 12, right: 12, top: 8),
+            child: ListView.separated(
+              separatorBuilder: (_, __) => const SizedBox(height: 8),
+              itemCount: cars.length,
+              itemBuilder: (context, index) {
+                return TweenAnimationBuilder(
+                  tween: Tween<double>(begin: 0, end: 1),
+                  duration: Duration(milliseconds: 350 + (index * 80)),
+                  builder: (context, value, child) {
+                    return Opacity(
+                      opacity: value,
+                      child: Transform.translate(
+                        offset: Offset(0, (1 - value) * 20),
+                        child: child,
+                      ),
+                    );
+                  },
+                  child: CarCard(
+                    car: cars[index],
+                    onTap: () => _viewCarDetails(cars[index]),
+                    onLongPress: () => _showCarMenu(context, cars[index]),
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -68,13 +98,12 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _viewCarDetails(Car car) async {
-    final result = await Navigator.push(
+    await Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => CarDetailsPage(car: car)),
     );
-    if (result != null) {
-      _loadCars();
-    }
+    _loadCars();
+    
   }
 
   void _showCarMenu(BuildContext context, Car car) {

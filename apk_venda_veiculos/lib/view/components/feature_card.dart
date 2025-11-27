@@ -50,7 +50,7 @@ class FeatureCard extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.all(20.0),
             child: Row(
-              children: [
+              children: <Widget>[
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
@@ -65,7 +65,7 @@ class FeatureCard extends StatelessWidget {
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
+                    children: <Widget>[
                       Text(
                         title,
                         style: GoogleFonts.poppins(

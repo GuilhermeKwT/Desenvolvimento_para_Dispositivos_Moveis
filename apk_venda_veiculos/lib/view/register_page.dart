@@ -64,11 +64,11 @@ class _RegisterPageState extends State<RegisterPage> {
                 key: _formKey,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
+                  children: <Widget>[
                     Align(
                       alignment: Alignment.center,
                       child: Column(
-                        children: [
+                        children: <Widget>[
                           Container(
                             width: 100,
                             height: 100,

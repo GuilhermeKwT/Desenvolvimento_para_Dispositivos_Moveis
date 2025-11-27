@@ -40,7 +40,7 @@ class _MyCarsPageState extends State<MyCarsPage> {
         child: const Icon(Icons.add),
       ),
       body: Stack(
-        children: [
+        children: <Widget>[
           Positioned.fill(
             child: Center(
               child: Image.asset(

@@ -41,7 +41,7 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
             constraints: const BoxConstraints(maxWidth: 700),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
+              children: <Widget>[
                 ClipRRect(
                   borderRadius: BorderRadius.circular(
                     AppTheme.borderRadiusMedium,
@@ -79,7 +79,7 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
+                    children: <Widget>[
                       _buildInfoRow('Marca', _car.brand),
                       const SizedBox(height: 12),
                       _buildInfoRow('Modelo', _car.model),
@@ -100,7 +100,7 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
                 ),
                 const SizedBox(height: 24),
                 Row(
-                  children: [
+                  children: <Widget>[
                     Expanded(
                       child: PrimaryButton(
                         onPressed: () => _editCar(),
@@ -135,7 +135,7 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
   Widget _buildInfoRow(String label, String value) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
+      children: <Widget>[
         SizedBox(
           width: 100,
           child: Text(
